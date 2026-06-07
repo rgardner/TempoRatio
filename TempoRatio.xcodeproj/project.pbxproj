@@ -27,6 +27,7 @@
 		C7D972552FD5BD3200A96121 /* TempoRatio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TempoRatio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7D972622FD5BD3300A96121 /* TempoRatioTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TempoRatioTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7D9726C2FD5BD3300A96121 /* TempoRatioUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TempoRatioUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C7D9727F2FD5BD7A00A96121 /* PRODUCT_REQUIREMENTS_DOC.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PRODUCT_REQUIREMENTS_DOC.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -75,6 +76,7 @@
 		C7D9724C2FD5BD3200A96121 = {
 			isa = PBXGroup;
 			children = (
+				C7D9727F2FD5BD7A00A96121 /* PRODUCT_REQUIREMENTS_DOC.md */,
 				C7D972572FD5BD3200A96121 /* TempoRatio */,
 				C7D972652FD5BD3300A96121 /* TempoRatioTests */,
 				C7D9726F2FD5BD3300A96121 /* TempoRatioUITests */,

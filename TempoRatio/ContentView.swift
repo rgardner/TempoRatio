@@ -288,7 +288,7 @@ struct ContentView: View {
             
             if restTime <= 0 {
                 restTime = 0
-                timerState = .completed
+                timerState = .idle
                 triggerNotificationHaptic(type: .success)
             }
             

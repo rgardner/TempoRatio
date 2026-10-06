@@ -6,7 +6,7 @@ import * as useTempo from './useTempo';
 
 const LABELS: Record<string, { label: string; glyph: string }> = {
   waiting: { label: 'LISTENING', glyph: '◉' },
-  playing: { label: 'PLAYING', glyph: '▶' },
+  playing: { label: 'PLAY', glyph: '▶' },
   resting: { label: 'REST', glyph: '❚❚' },
   ready: { label: 'READY', glyph: '✓' },
   paused: { label: 'PAUSED', glyph: '⏸' },

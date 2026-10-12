@@ -54,7 +54,7 @@ export function App() {
   const info = LABELS[phase];
 
   return (
-    <main className={`phase-${phase}`}>
+    <main className={`practice phase-${phase}`}>
       <header>
         <h1>TempoRatio</h1>
         <div className="seg small" role="radiogroup" aria-label="Detection mode">

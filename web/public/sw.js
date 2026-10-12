@@ -1,6 +1,6 @@
 // Stale-while-revalidate for same-origin GETs. Scope is the directory containing
 // this file, so it works under a GitHub Pages project path.
-const CACHE = 'temporatio-v1';
+const CACHE = 'temporatio-v2';
 
 self.addEventListener('install', () => self.skipWaiting());
 

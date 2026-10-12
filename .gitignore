@@ -2,3 +2,7 @@ node_modules/
 dist/
 .DS_Store
 xcuserdata/
+
+# Keep web icons even when a global macOS Icon? rule ignores this directory.
+!web/public/icons/
+!web/public/icons/*.png

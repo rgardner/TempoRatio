@@ -20,21 +20,34 @@ function Calibration(props: { onDone: (c: detector.Calibration) => void }) {
   const [message, setMessage] = React.useState('');
   const [level, setLevel] = React.useState(-100);
 
+  const active = React.useRef<audio.Mic | null>(null);
+  React.useEffect(() => () => { active.current?.stop(); active.current = null; }, []);
+
   const run = async () => {
     const mic = new audio.Mic();
+    active.current = mic;
+    setStep('noise');
+    let interruptionMessage = 'Calibration interrupted. Keep the app open and try again.';
+    let interrupted = false;
     const samples: number[] = [];
     let collecting = false;
     try {
       await mic.start((db) => {
         setLevel(db);
         if (collecting) samples.push(db);
+      }, (status, error) => {
+        if (status === 'interrupted' || status === 'unavailable') interrupted = true;
+        if (status === 'unavailable' && error) interruptionMessage = audio.micErrorMessage(error);
       });
+      if (active.current !== mic) return;
+      if (interrupted) throw new Error(interruptionMessage);
       const collect = async (next: Step, ms: number) => {
         setStep(next);
         samples.length = 0;
         collecting = true;
         await new Promise((r) => setTimeout(r, ms));
         collecting = false;
+        if (interrupted || active.current !== mic) throw new Error(interruptionMessage);
         return [...samples];
       };
       const noise = await collect('noise', 3000);
@@ -48,10 +61,12 @@ function Calibration(props: { onDone: (c: detector.Calibration) => void }) {
         setStep('done');
       }
     } catch (e) {
+      if (active.current !== mic) return;
       setMessage(e instanceof Error ? e.message : 'Microphone unavailable.');
       setStep('error');
     } finally {
       mic.stop();
+      if (active.current === mic) active.current = null;
     }
   };
 

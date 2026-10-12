@@ -11,6 +11,8 @@ export function useTempo() {
   const [state, setState] = React.useState(storage.loadSession);
   const [now, setNow] = React.useState(Date.now());
   const [level, setLevel] = React.useState(-100);
+  const micRef = React.useRef<audio.Mic | null>(null);
+  const [micStatus, setMicStatus] = React.useState<audio.MicStatus>('connecting');
   const [micError, setMicError] = React.useState<string | null>(null);
   const [summary, setSummary] = React.useState<session.Summary | null>(null);
 
@@ -44,6 +46,7 @@ export function useTempo() {
   // Timestamp-based tick: safe against throttling and backgrounding.
   const tick = React.useCallback(() => {
     const n = Date.now();
+    if (document.visibilityState === 'visible') audio.resumeBeep();
     const before = stateRef.current.phase;
     apply((s) => session.advance(s, n));
     if (before === 'resting' && stateRef.current.phase === 'ready') {
@@ -85,7 +88,7 @@ export function useTempo() {
       return;
     }
     const mic = new audio.Mic();
-    det.current.reset();
+    micRef.current = mic;
     mic
       .start((db) => {
         const n = Date.now();
@@ -97,15 +100,21 @@ export function useTempo() {
         } else if (ev?.type === 'end' && phase === 'playing') {
           apply((s) => session.endPlaying(s, ev.at, settingsRef.current.ratio));
         }
+      }, (status, error) => {
+        setMicStatus(status);
+        setLevel(-100);
+        det.current.reset();
+        if (status === 'listening' && stateRef.current.phase === 'playing') {
+          det.current.forcePlaying(Date.now());
+        }
+        setMicError(status === 'unavailable' ? audio.micErrorMessage(error) : null);
       })
-      .then(() => setMicError(null))
       .catch((e: unknown) => {
-        setMicError(
-          `Microphone unavailable (${e instanceof Error ? e.message : 'denied'}). Switched to manual mode.`,
-        );
-        updateSettings({ mode: 'manual' });
+        setMicStatus('unavailable');
+        setMicError(audio.micErrorMessage(e));
       });
-    return () => mic.stop();
+    return () => { micRef.current = null; mic.stop(); };
+
   }, [listening, apply, updateSettings]);
 
   // Keep the screen on while practicing.
@@ -127,6 +136,7 @@ export function useTempo() {
   }, [awake]);
 
   const actions = {
+    reconnectMic: () => { audio.unlockBeep(); void micRef.current?.reconnect(); },
     startSession: () => {
       audio.unlockBeep();
       setSummary(null);
@@ -138,6 +148,7 @@ export function useTempo() {
     stopPlaying: () => endPlaying(Date.now()),
     pause: () => apply((s) => session.pause(s, Date.now())),
     resume: () => {
+      audio.unlockBeep();
       det.current.reset();
       apply((s) => session.resume(s, Date.now()));
     },
@@ -152,5 +163,5 @@ export function useTempo() {
     },
   };
 
-  return { settings, updateSettings, state, now, level, micError, summary, actions };
+  return { settings, updateSettings, state, now, level, micStatus, micError, summary, actions };
 }

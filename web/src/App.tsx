@@ -122,7 +122,7 @@ export function App() {
             <div className="sub">{phase === 'paused' ? 'Session paused' : sub}</div>
             {auto && phase !== 'paused' && (
               <div className="listening">
-                <span className="dot" aria-hidden="true" /> Microphone on
+                <span className="dot" aria-hidden="true" /> {t.micStatus === 'listening' ? 'Microphone on' : t.micStatus === 'connecting' ? 'Connecting microphone…' : 'Microphone interrupted'}
                 <panels.Meter
                   level={t.level}
                   threshold={detector.thresholdDb(settings.calibration, settings.sensitivity)}
@@ -132,6 +132,9 @@ export function App() {
           </section>
 
           <section className="controls">
+            {auto && phase !== 'paused' && (t.micStatus === 'unavailable' || t.micStatus === 'interrupted') && (
+              <button className="btn secondary" onClick={actions.reconnectMic}>Reconnect microphone</button>
+            )}
             {phase === 'playing' && (
               <button className="btn primary huge" onClick={actions.stopPlaying}>
                 Stop
